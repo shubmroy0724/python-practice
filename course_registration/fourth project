@@ -1,0 +1,218 @@
+#Q10 — Course Registration System.
+
+from abc import ABC, abstractmethod
+
+class Person(ABC):
+    def __init__(self, name):
+        self._name = name
+
+    def get_name(self):
+        return self._name
+
+    @abstractmethod
+    def show_details(self):
+        pass
+
+
+class Student(Person):
+    def __init__(self, student_id, name):
+        super().__init__(name)
+        self._student_id = student_id
+        self.courses = []
+
+    def show_details(self):
+        print("Student ID:", self._student_id)
+        print("Name:", self._name)
+
+    def add_course(self, course):
+        self.courses.append(course)
+
+    def remove_course(self, course):
+        if course in self.courses:
+            self.courses.remove(course)
+
+    def show_courses(self):
+        if len(self.courses) == 0:
+            print("No courses registered")
+        else:
+            for course in self.courses:
+                print(course)
+
+
+class Course:
+    def __init__(self, course_id, name):
+        self.course_id = course_id
+        self.name = name
+
+    def show_course(self):
+        print("Course ID:", self.course_id)
+        print("Course Name:", self.name)
+
+
+students = []
+courses = []
+
+
+def add_student():
+    print("\nAdd Student")
+
+    student_id = input("Enter student ID: ")
+
+    for student in students:
+        if student._student_id == student_id:
+            print("Student ID already exists")
+            return
+
+    name = input("Enter student name: ")
+
+    student = Student(student_id, name)
+    students.append(student)
+
+    print("Student added successfully")
+
+
+def add_course():
+    print("\nAdd Course")
+
+    course_id = input("Enter course ID: ")
+
+    for course in courses:
+        if course.course_id == course_id:
+            print("Course ID already exists")
+            return
+
+    name = input("Enter course name: ")
+
+    course = Course(course_id, name)
+    courses.append(course)
+
+    print("Course added successfully")
+
+
+def register_course():
+    print("\nRegister Student for Course")
+
+    student_id = input("Enter student ID: ")
+    course_id = input("Enter course ID: ")
+
+    student_found = None
+    course_found = None
+
+    for student in students:
+        if student._student_id == student_id:
+            student_found = student
+
+    for course in courses:
+        if course.course_id == course_id:
+            course_found = course
+
+    if student_found is None:
+        print("Student not found")
+        return
+
+    if course_found is None:
+        print("Course not found")
+        return
+
+    student_found.add_course(course_found.name)
+
+    print("Course registered successfully")
+
+
+def drop_course():
+    print("\nDrop Course")
+
+    student_id = input("Enter student ID: ")
+    course_name = input("Enter course name: ")
+
+    for student in students:
+        if student._student_id == student_id:
+            if course_name in student.courses:
+                student.remove_course(course_name)
+                print("Course dropped successfully")
+                return
+            else:
+                print("Course not registered")
+                return
+
+    print("Student not found")
+
+
+def show_registrations():
+    print("\nStudent Registrations")
+
+    if len(students) == 0:
+        print("No students found")
+        return
+
+    for student in students:
+        print("Student ID:", student._student_id)
+        print("Name:", student.get_name())
+        print("Courses:")
+
+        if len(student.courses) == 0:
+            print("No courses registered")
+        else:
+            for course in student.courses:
+                print(course)
+
+        print()
+
+
+def save_data():
+    file = open("course_data.txt", "w")
+
+    for student in students:
+        file.write("Student ID: " + student._student_id + "\n")
+        file.write("Name: " + student.get_name() + "\n")
+
+        for course in student.courses:
+            file.write("Course: " + course + "\n")
+
+        file.write("\n")
+
+    file.close()
+
+    print("Data saved successfully")
+
+
+while True:
+    print("\nCourse Registration System")
+    print("1. Add Student")
+    print("2. Add Course")
+    print("3. Register Student")
+    print("4. Drop Course")
+    print("5. Display Registrations")
+    print("6. Save Data")
+    print("7. Exit")
+
+    choice = input("Enter your choice: ")
+
+    try:
+        if choice == "1":
+            add_student()
+
+        elif choice == "2":
+            add_course()
+
+        elif choice == "3":
+            register_course()
+
+        elif choice == "4":
+            drop_course()
+
+        elif choice == "5":
+            show_registrations()
+
+        elif choice == "6":
+            save_data()
+
+        elif choice == "7":
+            print("Program closed")
+            break
+
+        else:
+            print("Invalid choice")
+
+    except Exception:
+        print("Something went wrong")
